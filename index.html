@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio X-ray </title>
+  <style>
+    /* Container for side-by-side layout */
+    .input-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 20px;
+      gap: 20px;
+    }
+    .input-section {
+      width: 30%;
+      min-width: 250px; /* Ensures proper layout on small screens */
+    }
+    .pie-chart-container {
+      text-align: center; /* Center the chart title and image */
+      width: 100%;
+      max-width: 450px; /* Set a maximum width for better fit */
+      margin: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 5px;
+      text-align: center;
+    }
+    button {
+      margin-top: 10px;
+    }
+    /* Responsive Design */
+    @media (max-width: 800px) {
+      .input-container {
+        flex-direction: column; /* Stack vertically on small screens */
+        align-items: center;
+      }
+      .input-section {
+        width: 100%;
+      }
+    }
+  </style>
+  <script>
+    function addRow(sectionId, inputClass, placeholderText, includeAmount) {
+      let container = document.getElementById(sectionId);
+      let row = document.createElement("tr");
+
+      let tickerTd = document.createElement("td");
+      let tickerInput = document.createElement("input");
+      tickerInput.type = "text";
+      tickerInput.classList.add(inputClass);
+      tickerInput.placeholder = placeholderText;
+      tickerTd.appendChild(tickerInput);
+      row.appendChild(tickerTd);
+
+      if (includeAmount) {
+        let amountTd = document.createElement("td");
+        let amountInput = document.createElement("input");
+        amountInput.type = "number";
+        amountInput.classList.add("amount");
+        amountInput.placeholder = "$";
+        amountTd.appendChild(amountInput);
+        row.appendChild(amountTd);
+      }
+
+      container.appendChild(row);
+    }
+
+    async function fetch_treemap() {
+    try {
+        let response = await fetch("http://34.57.123.114:5000/get_treemap");
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let blob = await response.blob(); // Convert response to an image blob
+        let imageUrl = URL.createObjectURL(blob); // Create a URL for the image
+
+        document.getElementById("treemap").src = imageUrl; // Set image source
+    } catch (error) {
+        console.error("Error fetching treemap:", error);
+      }
+    }
+
+    async function calculateExposure() {
+      let etfs = [];
+      let mutualFunds = [];
+      let individualStocks = [];
+
+      document.querySelectorAll("#etfs-table tbody tr").forEach(row => {
+        let ticker = row.querySelector(".etf-ticker").value.trim();
+        let amount = parseFloat(row.querySelector(".amount").value);
+        if (ticker && !isNaN(amount)) {
+          etfs.push({ ticker: ticker, amount: amount });
+        }
+      });
+
+      document.querySelectorAll("#mutualfunds-table tbody tr").forEach(row => {
+        let ticker = row.querySelector(".mf-ticker").value.trim();
+        let amount = parseFloat(row.querySelector(".amount").value);
+        if (ticker && !isNaN(amount)) {
+          mutualFunds.push({ ticker: ticker, amount: amount });
+        }
+      });
+
+      document.querySelectorAll("#stocks-table tbody tr").forEach(row => {
+        let ticker = row.querySelector(".stock-ticker").value.trim();
+        let amount = parseFloat(row.querySelector(".amount").value);
+        if (ticker && !isNaN(amount)) {
+          individualStocks.push({ ticker: ticker, amount: amount });
+        }
+      });
+
+      let payload = { etfs, mutualFunds, individualStocks };
+
+      try {
+        let response = await fetch('http://34.57.123.114:5000/calculate_exposure', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        let data = await response.json();
+        document.getElementById("output").innerText = JSON.stringify(data.exposure, null, 2);
+
+        fetch_treemap();
+        
+      } catch (error) {
+        document.getElementById("output").innerText = "Error: " + error;
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>Portfolio X-ray </h2>
+
+  <!-- Flexbox container for side-by-side layout -->
+  <div class="input-container">
+    <!-- ETFs Section -->
+    <div class="input-section">
+      <h3>ETFs</h3>
+      <button onclick="addRow('etfs-tbody', 'etf-ticker', 'ETF Ticker', true)">Add ETF</button>
+      <table id="etfs-table">
+        <thead>
+          <tr><th>Ticker</th><th>Amount</th></tr>
+        </thead>
+        <tbody id="etfs-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Mutual Funds Section -->
+    <div class="input-section">
+      <h3>Mutual Funds</h3>
+      <button onclick="addRow('mf-tbody', 'mf-ticker', 'Mutual Fund Ticker', true)">Add Mutual Fund</button>
+      <table id="mutualfunds-table">
+        <thead>
+          <tr><th>Ticker</th><th>Amount</th></tr>
+        </thead>
+        <tbody id="mf-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Individual Stocks Section -->
+    <div class="input-section">
+      <h3>Individual Stocks</h3>
+      <button onclick="addRow('stocks-tbody', 'stock-ticker', 'Stock Ticker', true)">Add Stock</button>
+      <table id="stocks-table">
+        <thead>
+          <tr><th>Ticker</th><th>Amount</th></tr>
+        </thead>
+        <tbody id="stocks-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <br>
+  <button onclick="calculateExposure()"> Take X-ray </button>
+
+  <!-- Results and Pie Chart Layout -->
+  <div class="input-container">
+    <div class="input-section">
+      <h3> X-ray Data:</h3>
+      <pre id="output"></pre>
+    </div>
+    <div class="pie-chart-container">
+      <h3>X-ray Tree map:</h3>
+      <img id="treemap" src="" alt="Tree map will appear here after calculation">
+    </div>
+  </div>
+</body>
+</html>
