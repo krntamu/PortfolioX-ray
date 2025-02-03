@@ -63,18 +63,24 @@ def get_mutualfunds_holdings_from_stock_analysis(ticker):
         return None
 
 def update_dict(dict1, dict2):
+    """ 
+    Maintain a cumulative percentage for each stock
+    Sometimes the %weight is zero for some stocks.
+    In this case, make it at least 0.01 so that the treemap function does not complain
+    """
     for key, value in dict2.items():
-        dict1[key] = dict1.get(key, 0) + value
+        dict1[key] = max(dict1.get(key, 0) + value, 0.01)
     return dict1
 
 def return_top_k(dictionary, kmax=30):
     sorted_items = sorted(dictionary.items(), key=lambda x: x[1], reverse=True)
+    kmax = min(len(sorted_items),kmax)
     top_k = sorted_items[:kmax]
     return {key: value for key, value in top_k}
 
 def add_other(dictionary):
     total_percentage = sum(dictionary.values())
-    dictionary["Others"] = max(0, 100 - total_percentage)
+    dictionary["Others"] = max(0.01, 100 - total_percentage)
     return dictionary
 
 def calculate_exposure(etfs, mutualfunds, stocks):
@@ -98,7 +104,7 @@ def calculate_exposure(etfs, mutualfunds, stocks):
         allocation = 100 * stock["amount"] / total_portfolio
         exposure[ticker] = exposure.get(ticker, 0) + allocation
 
-    exposure = return_top_k(exposure, 30)
+    exposure = return_top_k(exposure, 40)
     exposure = add_other(exposure)
 
     return exposure
@@ -166,12 +172,12 @@ def main():
 
             col_data, col_chart = st.columns([1, 1.5])
             with col_data:
-                st.subheader("X-ray Data:")
+                st.subheader("X-ray Data")
                 exposure_df = pd.DataFrame(exposure.items(), columns=["Stock", "Portfolio Exposure (%)"])
                 st.dataframe(exposure_df)
 
             with col_chart:
-                st.subheader("X-ray Tree map:")
+                st.subheader("X-ray Tree map")
                 treemap_img = plot_treemap(exposure)
                 st.image(treemap_img)
 
