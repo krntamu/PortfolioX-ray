@@ -10,7 +10,10 @@ import squarify
 
 st.set_page_config(page_title="Portfolio X-ray", layout="wide")
 
-# Professional Theme
+# Display Banner Image
+st.image("banner.png", use_container_width=True)
+
+# Professional Theme with enhanced checkbox styling
 st.markdown("""
     <style>
     .stInfo {
@@ -20,6 +23,20 @@ st.markdown("""
     .stSuccess {
         background-color: #f8f9fa !important;
         border: 2px solid #28a745 !important;
+    }
+    /* Checkbox styling */
+    .stCheckbox {
+        position: relative;
+        padding: 15px !important;
+    }
+    .stCheckbox label {
+        font-size: 1.2rem !important;
+        font-weight: 500 !important;
+        color: #0f1010 !important;
+    }
+    .stCheckbox input[type="checkbox"] {
+        transform: scale(1.5);
+        margin-right: 10px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -158,7 +175,9 @@ def process_excel_file(df):
 
     
 def main():
-    st.title("Portfolio X-ray")
+    #st.title("Portfolio X-ray")
+
+
     
     # Add description with native Streamlit formatting
     st.markdown("""
@@ -166,9 +185,9 @@ def main():
     """)
     
     st.info("""
-    An investor often has a mixture of Mutual funds, ETFs, and individual stocks. Mutual funds and ETFs invest in various 
+    An investor typically invests in a mixture of Mutual funds, ETFs, and individual stocks. Mutual funds and ETFs, in turn, invest in 
     individual stocks. Want to know what percentage of your portfolio is invested in individual stocks aggregated over all 
-    your investments? Portfolio X-ray is the tool for you!
+    your investments? This tool is for you.
     """)
     
     st.markdown("""
@@ -204,6 +223,7 @@ def main():
                     with col_data:
                         st.subheader("X-ray Data:")
                         exposure_df = pd.DataFrame(exposure.items(), columns=["Stock", "Portfolio Exposure (%)"])
+                        exposure_df.index = exposure_df.index + 1
                         exposure_df["Portfolio Exposure (%)"] = exposure_df["Portfolio Exposure (%)"].round(2)
                         st.dataframe(exposure_df)
                     
@@ -264,6 +284,7 @@ def main():
                 with col_data:
                     st.subheader("X-ray Data:")
                     exposure_df = pd.DataFrame(exposure.items(), columns=["Stock", "Portfolio Exposure (%)"])
+                    exposure_df.index = exposure_df.index + 1
                     exposure_df["Portfolio Exposure (%)"] = exposure_df["Portfolio Exposure (%)"].round(2)
                     st.dataframe(exposure_df)
                 
