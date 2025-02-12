@@ -10,6 +10,34 @@ import squarify
 
 st.set_page_config(page_title="Portfolio X-ray", layout="wide")
 
+# Professional Theme with enhanced checkbox styling
+st.markdown("""
+    <style>
+    .stInfo {
+        background-color: #f8f9fa !important;
+        border: 2px solid #6c757d !important;
+    }
+    .stSuccess {
+        background-color: #f8f9fa !important;
+        border: 2px solid #28a745 !important;
+    }
+    /* Checkbox styling */
+    .stCheckbox {
+        position: relative;
+        padding: 15px !important;
+    }
+    .stCheckbox label {
+        font-size: 1.2rem !important;
+        font-weight: 500 !important;
+        color: #0f1010 !important;
+    }
+    .stCheckbox input[type="checkbox"] {
+        transform: scale(1.5);
+        margin-right: 10px !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 def convert_us_format(s):
     return float((s.replace("%", "")).replace(",", ""))
 
@@ -111,7 +139,6 @@ def plot_treemap(exposure):
     plt.figure(figsize=(6, 6))
     squarify.plot(sizes=sizes, label=labels, alpha=0.7)
     plt.axis("off")
-    plt.title("Portfolio Exposure Treemap")
 
     img_io = io.BytesIO()
     plt.savefig(img_io, format="png", bbox_inches="tight")
@@ -149,7 +176,7 @@ def main():
     
     # Add description with native Streamlit formatting
     st.markdown("""
-    ## 📊 What is Portfolio X-ray?
+    ## What is Portfolio X-ray?
     """)
     
     st.info("""
@@ -159,7 +186,7 @@ def main():
     """)
     
     st.markdown("""
-    ## 🔍 How to use:
+    ## How to use:
     You can input your investments in two ways:
     """)
     
