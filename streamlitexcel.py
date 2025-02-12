@@ -143,14 +143,39 @@ def process_excel_file(df):
     
     return etfs, mutualfunds, stocks
 
+    
 def main():
     st.title("Portfolio X-ray")
     
-    # Add input method selection
-    input_method = st.radio("Choose input method:", ["Upload Excel", "Manual Input"])
+    # Add description with native Streamlit formatting
+    st.markdown("""
+    ## 📊 What is Portfolio X-ray?
+    """)
     
-    if input_method == "Upload Excel":
-        uploaded_file = st.file_uploader("Upload your portfolio Excel file. The file must have exactly 3 columns: Fund Type (ETF/MF/IS), Ticker, Amount", type=['xlsx', 'xls'])
+    st.info("""
+    An investor often has a mixture of Mutual funds, ETFs, and individual stocks. Mutual funds and ETFs invest in various 
+    individual stocks. Want to know what percentage of your portfolio is invested in individual stocks aggregated over all 
+    your investments? Portfolio X-ray is the tool for you!
+    """)
+    
+    st.markdown("""
+    ## 🔍 How to use:
+    You can input your investments in two ways:
+    """)
+    
+    st.success("""
+    1. **Manual Input**: Enter your investments directly in the form below
+    2. **Excel File Upload**: Upload an Excel file with exactly 3 columns:
+       * Column 1: Fund Type (Use `MF` for mutual funds, `ETF` for exchange traded funds, `IS` for individual stocks)
+       * Column 2: Ticker Symbol
+       * Column 3: Investment Amount in dollars
+    """)
+    
+    # Add a small checkbox for Excel upload option
+    use_excel = st.checkbox("Use Excel file instead?")
+    
+    if use_excel:
+        uploaded_file = st.file_uploader("Upload your portfolio Excel file", type=['xlsx', 'xls'])
         if uploaded_file is not None:
             try:
                 df = pd.read_excel(uploaded_file)
@@ -176,7 +201,7 @@ def main():
             except Exception as e:
                 st.error(f"Error processing file: {str(e)}")
     
-    else:  # Manual Input
+    else:  # Manual Input (default)
         col1, col2, col3 = st.columns(3)
         
         # ETFs Input
@@ -185,7 +210,7 @@ def main():
             etfs = []
             num_etfs = st.number_input("Number of ETFs", min_value=0, max_value=10, step=1, key="etf_count")
             for i in range(num_etfs):
-                cols = st.columns([1, 2])  # Ticker (1/3 width), Amount (2/3 width, slightly larger)
+                cols = st.columns([1, 2])
                 ticker = cols[0].text_input(f"Ticker {i+1}", key=f"etf_ticker_{i}")
                 amount = cols[1].number_input(f"Amount {i+1}", min_value=0.0, key=f"etf_amount_{i}")
                 if ticker and amount:
