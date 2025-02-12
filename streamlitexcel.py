@@ -133,7 +133,7 @@ def plot_treemap(exposure):
 
 def process_excel_file(df):
     # Skip header if it exists (first row contains column names)
-    if df.iloc[0][0].upper() not in ['ETF', 'MF', 'IS']:
+    if df.iloc[0].iloc[0].upper() not in ['ETF', 'MF', 'IS']:
         df = df.iloc[1:]
     
     etfs = []
@@ -141,9 +141,9 @@ def process_excel_file(df):
     stocks = []
     
     for _, row in df.iterrows():
-        fund_type = row[0].upper()
-        ticker = row[1]
-        amount = float(row[2])
+        fund_type = row.iloc[0].upper()
+        ticker = row.iloc[1]
+        amount = float(row.iloc[2])
         
         fund_entry = {"ticker": ticker, "amount": amount}
         
