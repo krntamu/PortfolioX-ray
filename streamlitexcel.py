@@ -180,9 +180,9 @@ def main():
     """)
     
     st.info("""
-    An investor often has a mixture of Mutual funds, ETFs, and individual stocks. Mutual funds and ETFs invest in various 
+    An investor typically has a mixture of Mutual funds, ETFs, and individual stocks. Mutual funds and ETFs, in turn, invest in various 
     individual stocks. Want to know what percentage of your portfolio is invested in individual stocks aggregated over all 
-    your investments? Portfolio X-ray is the tool for you!
+    your investments? This is the tool for you.
     """)
     
     st.markdown("""
