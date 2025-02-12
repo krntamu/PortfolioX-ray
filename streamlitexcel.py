@@ -179,9 +179,9 @@ def main():
     st.success("""
     1. **Manual Input**: Enter your investments directly in the form below
     2. **Excel File Upload**: Upload an Excel file with exactly 3 columns:
-       * Column 1: Fund Type (Use `MF` for mutual funds, `ETF` for exchange traded funds, `IS` for individual stocks)
-       * Column 2: Ticker Symbol
-       * Column 3: Investment Amount in dollars
+       * Column 1: Fund type (Use `MF` for mutual funds, `ETF` for exchange traded funds, `IS` for individual stocks)
+       * Column 2: Ticker symbol
+       * Column 3: Investment amount in dollars
     """)
     
     # Add a small checkbox for Excel upload option
