@@ -10,7 +10,7 @@ import squarify
 
 st.set_page_config(page_title="Portfolio X-ray", layout="wide")
 
-# Professional Theme with enhanced checkbox styling
+# Professional Theme
 st.markdown("""
     <style>
     .stInfo {
@@ -20,20 +20,6 @@ st.markdown("""
     .stSuccess {
         background-color: #f8f9fa !important;
         border: 2px solid #28a745 !important;
-    }
-    /* Checkbox styling */
-    .stCheckbox {
-        position: relative;
-        padding: 15px !important;
-    }
-    .stCheckbox label {
-        font-size: 1.2rem !important;
-        font-weight: 500 !important;
-        color: #0f1010 !important;
-    }
-    .stCheckbox input[type="checkbox"] {
-        transform: scale(1.5);
-        margin-right: 10px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -180,9 +166,9 @@ def main():
     """)
     
     st.info("""
-    An investor typically has a mixture of Mutual funds, ETFs, and individual stocks. Mutual funds and ETFs, in turn, invest in various 
+    An investor often has a mixture of Mutual funds, ETFs, and individual stocks. Mutual funds and ETFs invest in various 
     individual stocks. Want to know what percentage of your portfolio is invested in individual stocks aggregated over all 
-    your investments? This is the tool for you.
+    your investments? Portfolio X-ray is the tool for you!
     """)
     
     st.markdown("""
@@ -218,6 +204,7 @@ def main():
                     with col_data:
                         st.subheader("X-ray Data:")
                         exposure_df = pd.DataFrame(exposure.items(), columns=["Stock", "Portfolio Exposure (%)"])
+                        exposure_df["Portfolio Exposure (%)"] = exposure_df["Portfolio Exposure (%)"].round(2)
                         st.dataframe(exposure_df)
                     
                     with col_chart:
@@ -277,6 +264,7 @@ def main():
                 with col_data:
                     st.subheader("X-ray Data:")
                     exposure_df = pd.DataFrame(exposure.items(), columns=["Stock", "Portfolio Exposure (%)"])
+                    exposure_df["Portfolio Exposure (%)"] = exposure_df["Portfolio Exposure (%)"].round(2)
                     st.dataframe(exposure_df)
                 
                 with col_chart:
