@@ -150,7 +150,7 @@ def main():
     input_method = st.radio("Choose input method:", ["Upload Excel", "Manual Input"])
     
     if input_method == "Upload Excel":
-        uploaded_file = st.file_uploader("Upload your portfolio Excel file", type=['xlsx', 'xls'])
+        uploaded_file = st.file_uploader("Upload your portfolio Excel file. The file must have exactly 3 columns: Fund Type (ETF/MF/IS), Ticker, Amount", type=['xlsx', 'xls'])
         if uploaded_file is not None:
             try:
                 df = pd.read_excel(uploaded_file)
